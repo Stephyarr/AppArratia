@@ -1,7 +1,8 @@
 import React, { useState} from 'react';
-import { Button, Text, TextInput, View, FlatList, TouchableOpacity, Modal } from 'react-native';
+import { Text, View } from 'react-native';
 import { styles } from './styles';
-import { AddItem } from './components';
+import { AddItem, CustomModal, TaskList } from './components';
+import { colors } from './constants/colors';
 
 
 const App = () => {
@@ -28,17 +29,9 @@ const App = () => {
 
   const onHandlerModal = (item) => {
     setIsModalVisible(!isModalVisible)
-    setSelectedTask(item);
+    setSelectedTask(item)
   }
-
-  const renderItem = ({item}) => (
-    <TouchableOpacity style={styles.itemContainer} onPress={() => onHandlerModal(item)}>
-      <Text style={styles.itemList}>{item.value}</Text>
-    </TouchableOpacity>
-  )
-
-  const keyExtractor = (item) => item.id;
-
+  
   const onHandlerCancel = () => {
     setIsModalVisible(!isModalVisible)
     setSelectedTask(null)
@@ -53,54 +46,24 @@ const App = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.titleMain}>TASK LIST</Text>
-      <AddItem 
-        // buttonColor={}
-        // buttonText={}
-        // onHandlerChange={}
-        // onHandlerSubmit={}
-        // placeholder={}
-        // task={}
-        // key={}
+      <AddItem
+        buttonColor={colors.primary}
+        buttonText='Add'
+        onHandlerChange={onHandlerChange}
+        onHandlerSubmit={onHandlerSubmit}
+        placeholder='add a new task'
+        task={task}
       />
-     <View style={styles.inputContainer}>
-        <TextInput 
-        style={styles.input} 
-        placeholder='add Task'
-        autoComplete='off'
-        autoCorrect={false}
-        autoCapitalize='none'
-        value={task}
-        onChangeText={onHandlerChange}
+      <TaskList
+          tasks={tasks}
+          onHandlerModal={onHandlerModal}
+      /> 
+      <CustomModal
+          isModalVisible={isModalVisible}
+          onHandlerCancel={onHandlerCancel}
+          onHandlerDelete={onHandlerDelete}
+          selectedTask={selectedTask}
         />
-        <Button disabled={!task} title='Add' color='black' onPress={onHandlerSubmit}/>
-     </View>
-     <FlatList
-      data={tasks}
-      renderItem={renderItem}
-      keyExtractor={keyExtractor}
-      style={styles.listContainer}
-     /> 
-     <Modal visible={isModalVisible} animationType='slide'>
-      <View style={styles.modalContainer}>
-        <Text style={styles.modalTitle}>Task Detail</Text>
-        <View style={styles.modalDetailContainer}>
-          <Text style={styles.modalDetailMessage}>Are you sure to delete?</Text>
-          <Text style={styles.selectedTask}>{selectedTask?.value}</Text>
-        </View>
-        <View style={styles.modalButtonContainer}>
-          <Button
-          title='Cancel'
-          color='#636893'
-          onPress= {onHandlerCancel}
-          />
-          <Button
-          title='Delete'
-          color= '#636893'
-          onPress= {onHandlerDelete}
-          />
-        </View>
-      </View>
-     </Modal>
     </View>
   );
 }
